@@ -374,6 +374,7 @@ textarea:focus {
 	display: block;
 	margin: 0 auto;
 	margin-bottom: 2rem;
+    cursor: pointer;
 }
 
 .glazing_block a {
@@ -493,11 +494,19 @@ textarea:focus {
 	padding: 2rem 2rem;
 }
 
-.glazing .aluminum,
+/* .glazing .aluminum,
 .glazing .plastic,
 .glazing .french,
 .glazing .rise {
 	display: none;
+} */
+
+.glazing_content {
+    display: none;
+}
+
+.glazing_content.active {
+    display: block;
 }
 
 .glazing a.active {
@@ -595,11 +604,14 @@ textarea:focus {
 	color: #000000;
 }
 
-.decoration .external,
-.decoration .rising,
-.decoration .roof {
-	display: none;
+[data-decoration-content] {
+    display: none;
 }
+
+[data-decoration-content].active {
+    display: block;
+}
+
 
 /*Our works*/
 .works {
@@ -846,7 +858,7 @@ textarea:focus {
 .popup,
 .popup_engineer,
 .popup_calc_end {
-	display: none;
+    visibility: hidden;
 	position: fixed;
 	top: 0;
 	left: 0;
@@ -854,6 +866,8 @@ textarea:focus {
 	height: 100%;
 	z-index: 9;
 	background-color: rgba(0, 0, 0, 0.5);
+    display: grid;
+    place-items: center;
 }
 
 .myimage {
@@ -880,14 +894,15 @@ textarea:focus {
 .popup_content,
 .popup_engineer_content,
 .popup_calc_end_content {
-	/* display: none; */
-	position: fixed;
-	top: 10%;
-	left: 50%;
-	-webkit-transform: translateX(-50%);
-	transform: translateX(-50%);
+    transition: .2s ease-in-out !important;
+    transform: scale(0);
 	width: 40rem;
 	background-color: #ffffff;
+}
+
+.show-scale {
+    visibility: visible !important;
+    transform: scale(1);
 }
 
 .popup_close,
@@ -903,7 +918,7 @@ textarea:focus {
 }
 
 .popup_calc {
-	display: none;
+	visibility: hidden;
 	position: fixed;
 	top: 0;
 	left: 0;
@@ -911,6 +926,10 @@ textarea:focus {
 	height: 100%;
 	z-index: 9;
 	background-color: rgba(0, 0, 0, 0.5);
+}
+
+.overlay-active {
+    visibility: visible;
 }
 
 .popup_calc_content {

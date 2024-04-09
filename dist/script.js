@@ -1,6 +1,63 @@
 /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
+/***/ "./src/js/modules/changeModalState.js":
+/*!********************************************!*\
+  !*** ./src/js/modules/changeModalState.js ***!
+  \********************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _settingInputsType__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./settingInputsType */ "./src/js/modules/settingInputsType.js");
+
+const changeModalState = state => {
+  const windowForm = document.querySelectorAll('.balcon_icons_img');
+  const windowWidth = document.querySelectorAll('#width');
+  const windowHeight = document.querySelectorAll('#height');
+  const windowType = document.querySelectorAll('#view_type');
+  const windowProfile = document.querySelectorAll('.checkbox');
+  (0,_settingInputsType__WEBPACK_IMPORTED_MODULE_0__["default"])('#width');
+  (0,_settingInputsType__WEBPACK_IMPORTED_MODULE_0__["default"])('#height');
+  function bindActionsToElems(event, element, property) {
+    element.forEach((item, index) => {
+      item.addEventListener(event, () => {
+        switch (item.nodeName) {
+          case 'SPAN':
+            state[property] = index;
+            break;
+          case 'INPUT':
+            if (item.getAttribute('type') === 'checkbox') {
+              index === 0 ? state[property] = 'Теплое' : state[property] = 'Холодное';
+              element.forEach((box, j) => {
+                box.checked = false;
+                if (index === j) {
+                  box.checked = true;
+                }
+              });
+            } else {
+              state[property] = item.value;
+            }
+            break;
+          case 'SELECT':
+            state[property] = item.value;
+        }
+      });
+    });
+  }
+  bindActionsToElems('click', windowForm, 'form');
+  bindActionsToElems('input', windowWidth, 'width');
+  bindActionsToElems('input', windowHeight, 'height');
+  bindActionsToElems('change', windowType, 'type');
+  bindActionsToElems('change', windowProfile, 'profile');
+};
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (changeModalState);
+
+/***/ }),
+
 /***/ "./src/js/modules/forms.js":
 /*!*********************************!*\
   !*** ./src/js/modules/forms.js ***!
@@ -15,26 +72,28 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _server__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./server */ "./src/js/modules/server.js");
 /* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./utils */ "./src/js/modules/utils.js");
 /* harmony import */ var _messages__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./messages */ "./src/js/modules/messages.js");
+/* harmony import */ var _settingInputsType__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./settingInputsType */ "./src/js/modules/settingInputsType.js");
 
 
 
-const forms = () => {
+
+const forms = state => {
   const form = document.querySelectorAll('form');
-  const phoneInputs = document.querySelectorAll('input[name="user_phone"]');
-  phoneInputs.forEach(item => {
-    item.addEventListener('input', () => {
-      item.value = item.value.replace(/\D/, '');
-    });
-  });
+  (0,_settingInputsType__WEBPACK_IMPORTED_MODULE_3__["default"])('input[name="user_phone"]');
   form.forEach(form => {
     form.addEventListener('submit', e => {
       e.preventDefault();
-      const formData = new FormData(form);
-      const formDataObj = (0,_utils__WEBPACK_IMPORTED_MODULE_1__.transformFormData)(formData);
       const messageInfo = document.createElement('div');
       messageInfo.classList.add('status');
       messageInfo.textContent = _messages__WEBPACK_IMPORTED_MODULE_2__.message.loading;
       form.append(messageInfo);
+      const formData = new FormData(form);
+      if (form.getAttribute('data-calc') === 'end') {
+        for (let key in state) {
+          formData.append(key, state[key]);
+        }
+      }
+      const formDataObj = (0,_utils__WEBPACK_IMPORTED_MODULE_1__.transformFormData)(formData);
       (0,_server__WEBPACK_IMPORTED_MODULE_0__.postReq)('assets/server.php', formDataObj).then(() => {
         (0,_messages__WEBPACK_IMPORTED_MODULE_2__.showMessage)('.status', _messages__WEBPACK_IMPORTED_MODULE_2__.message.succsess);
       }).catch(err => {
@@ -223,8 +282,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   postReq: () => (/* binding */ postReq)
 /* harmony export */ });
-/* harmony import */ var _messages__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./messages */ "./src/js/modules/messages.js");
-
 async function postReq(url, body) {
   try {
     const res = await fetch(url, {
@@ -240,6 +297,29 @@ async function postReq(url, body) {
   }
 }
 
+
+/***/ }),
+
+/***/ "./src/js/modules/settingInputsType.js":
+/*!*********************************************!*\
+  !*** ./src/js/modules/settingInputsType.js ***!
+  \*********************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+const settingInputsType = selector => {
+  const inputs = document.querySelectorAll(selector);
+  inputs.forEach(item => {
+    item.addEventListener('input', () => {
+      item.value = item.value.replace(/\D/, '');
+    });
+  });
+};
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (settingInputsType);
 
 /***/ }),
 
@@ -14222,35 +14302,43 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _modules_modals__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./modules/modals */ "./src/js/modules/modals.js");
 /* harmony import */ var _modules_tabs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./modules/tabs */ "./src/js/modules/tabs.js");
 /* harmony import */ var _modules_forms__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./modules/forms */ "./src/js/modules/forms.js");
+/* harmony import */ var _modules_changeModalState__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./modules/changeModalState */ "./src/js/modules/changeModalState.js");
 
 
 
 
-(0,_modules_modals__WEBPACK_IMPORTED_MODULE_1__["default"])();
-(0,_modules_tabs__WEBPACK_IMPORTED_MODULE_2__["default"])({
-  wrapperSelector: '.glazing_slider',
-  tabSelector: '.glazing_slider .glazing_block',
-  contentSelector: '.glazing_content',
-  tabActiveClass: 'active',
-  contentActiveClass: 'active'
+
+window.addEventListener('DOMContentLoaded', () => {
+  'use-strict';
+
+  (0,_modules_modals__WEBPACK_IMPORTED_MODULE_1__["default"])();
+  const modalState = {};
+  (0,_modules_changeModalState__WEBPACK_IMPORTED_MODULE_4__["default"])(modalState);
+  (0,_modules_forms__WEBPACK_IMPORTED_MODULE_3__["default"])(modalState);
+  (0,_modules_tabs__WEBPACK_IMPORTED_MODULE_2__["default"])({
+    wrapperSelector: '.glazing_slider',
+    tabSelector: '.glazing_slider .glazing_block',
+    contentSelector: '.glazing_content',
+    tabActiveClass: 'active',
+    contentActiveClass: 'active'
+  });
+  (0,_modules_tabs__WEBPACK_IMPORTED_MODULE_2__["default"])({
+    wrapperSelector: '.decoration_slider',
+    tabSelector: '.no_click',
+    contentSelector: '[data-decoration-content]',
+    tabActiveClass: 'after_click',
+    contentActiveClass: 'active',
+    initialContentIndex: 0
+  });
+  (0,_modules_tabs__WEBPACK_IMPORTED_MODULE_2__["default"])({
+    wrapperSelector: '.balcon_icons',
+    tabSelector: '.balcon_icons_img',
+    contentSelector: '.big_img > img',
+    tabActiveClass: 'do_image_more',
+    contentActiveClass: 'active',
+    initialContentIndex: 0
+  });
 });
-(0,_modules_tabs__WEBPACK_IMPORTED_MODULE_2__["default"])({
-  wrapperSelector: '.decoration_slider',
-  tabSelector: '.no_click',
-  contentSelector: '[data-decoration-content]',
-  tabActiveClass: 'after_click',
-  contentActiveClass: 'active',
-  initialContentIndex: 0
-});
-(0,_modules_tabs__WEBPACK_IMPORTED_MODULE_2__["default"])({
-  wrapperSelector: '.balcon_icons',
-  tabSelector: '.balcon_icons_img',
-  contentSelector: '.big_img > img',
-  tabActiveClass: 'do_image_more',
-  contentActiveClass: 'active',
-  initialContentIndex: 0
-});
-(0,_modules_forms__WEBPACK_IMPORTED_MODULE_3__["default"])();
 })();
 
 /******/ })()

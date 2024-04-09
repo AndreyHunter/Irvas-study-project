@@ -1,48 +1,46 @@
-import { postReq } from "./server";
-import { transformFormData } from "./utils";
-import { 
-    message,
-    showMessage
- } from "./messages";
+import { postReq } from './server';
+import { transformFormData } from './utils';
+import { message, showMessage } from './messages';
+import settingInputsType from './settingInputsType';
 
-const forms = () => {
-    const form = document.querySelectorAll('form');
-    const phoneInputs = document.querySelectorAll('input[name="user_phone"]');
-    
-    phoneInputs.forEach(item => {
-        item.addEventListener('input', () => {
-            item.value = item.value.replace(/\D/, '')
-        });
-    });
+const forms = (state) => {
+	const form = document.querySelectorAll('form');
 
-    form.forEach(form => {
-        form.addEventListener('submit', (e) => {
-            e.preventDefault();
+	settingInputsType('input[name="user_phone"]');
 
-            const formData = new FormData(form);
-            const formDataObj = transformFormData(formData);
-            
+	form.forEach((form) => {
+		form.addEventListener('submit', (e) => {
+			e.preventDefault();
+
             const messageInfo = document.createElement('div');
-            messageInfo.classList.add('status');
-            messageInfo.textContent = message.loading;
-            form.append(messageInfo);
+			messageInfo.classList.add('status');
+			messageInfo.textContent = message.loading;
+			form.append(messageInfo);
 
-            postReq('assets/server.php', formDataObj)
-                .then(() => {
-                    showMessage('.status', message.succsess)
-                })
-                .catch(err => {
-                    console.error(err, 'Something went wrong')
-                    showMessage('.status', message.error)
-                })
-                .finally(() => {
-                    setTimeout(() => {
-                       document.querySelector('.status').remove();
-                    }, 3500)
-                    form.reset()
-                })
-        });
-    })
+			const formData = new FormData(form);
+            if (form.getAttribute('data-calc') === 'end') {
+                for (let key in state)  {
+                    formData.append(key, state[key])
+                }
+            }
+            const formDataObj = transformFormData(formData);
+
+			postReq('assets/server.php', formDataObj)
+				.then(() => {
+					showMessage('.status', message.succsess);
+				})
+				.catch((err) => {
+					console.error(err, 'Something went wrong');
+					showMessage('.status', message.error);
+				})
+				.finally(() => {
+					setTimeout(() => {
+						document.querySelector('.status').remove();
+					}, 3500);
+					form.reset();
+				});
+		});
+	});
 };
 
 export default forms;

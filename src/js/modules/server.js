@@ -1,8 +1,3 @@
-import { 
-    message,
-    showMessage
- } from "./messages";
-
 async function postReq(url, body) {
 	try {
 		const res = await fetch(url, {
@@ -16,7 +11,7 @@ async function postReq(url, body) {
 
 		return await res.text();
 	} catch (err) {
-        console.error(err, 'Something went wrong');
+		console.error(err, 'Something went wrong');
 	}
 }
 

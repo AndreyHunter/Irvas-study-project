@@ -1,3 +1,5 @@
+import { get } from "jquery";
+
 const initializingModal = () => {
 	function bindModal({
 		triggerSelector,
@@ -57,14 +59,33 @@ const initializingModal = () => {
 		function openModal() {
 			modal.classList.add(overlayActiveClass);
 			modalContent.classList.add(modalActiveClass);
-			document.body.classList.add('modal-open');
+			toggleBodyOverflow()
 		}
 
 		function closeModal() {
 			modal.classList.remove(overlayActiveClass);
 			modalContent.classList.remove(modalActiveClass);
-			document.body.classList.remove('modal-open');
+			toggleBodyOverflow()
 		}
+
+        function toggleBodyOverflow() {
+            const body = document.body;
+            body.style.overflow = body.style.overflow === 'hidden' ? '' : 'hidden';
+            const scrollWidth = getScrollBarWidth();
+            body.style.paddingRight = body.style.overflow === 'hidden' ? `${scrollWidth}px` : '';
+        }
+
+        function getScrollBarWidth() {
+            const div = document.createElement('div');
+            div.style.width = '50px';
+            div.style.height = '50px';
+            div.style.overflowY = 'scroll';
+            div.style.visibility = 'hidden';
+            document.body.append(div)
+            const scrollWidth = div.offsetWidth - div.clientWidth;
+            div.remove();
+            return scrollWidth;
+        }
 	}
 
 	// ENGINNER MODAL

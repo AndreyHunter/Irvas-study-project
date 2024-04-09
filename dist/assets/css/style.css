@@ -1857,6 +1857,32 @@ textarea:focus {
 	}
 }
 
+.faded {
+    animation: faded 1s ease-in-out;
+}
+
+@keyframes faded {
+    from {
+        opacity: 0.3;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+.popup-images {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	z-index: 15;
+	background-color: rgba(0, 0, 0, 0.5);
+    display: none;
+    place-items: center;
+}
+
 /* small devices, tablets */
 @media only screen and (max-width: 768px) {
 	.animated {

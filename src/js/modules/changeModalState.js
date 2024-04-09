@@ -10,7 +10,6 @@ const changeModalState = (state) => {
 	settingInputsType('#width');
 	settingInputsType('#height');
 
-
 	function bindActionsToElems(event, element, property) {
 		element.forEach((item, index) => {
 			item.addEventListener(event, () => {

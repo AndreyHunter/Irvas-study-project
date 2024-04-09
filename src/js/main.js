@@ -3,17 +3,18 @@ import initializingModal from './modules/modals';
 import tabs from './modules/tabs';
 import forms from './modules/forms';
 import changeModalState from './modules/changeModalState';
+import timer from './modules/timer';
+import images from './modules/images';
 
 window.addEventListener('DOMContentLoaded', () => {
 	'use-strict';
 
 	initializingModal();
-	
 
 	const modalState = {};
 	changeModalState(modalState);
 
-    forms(modalState);
+	forms(modalState);
 
 	tabs({
 		wrapperSelector: '.glazing_slider',
@@ -40,4 +41,10 @@ window.addEventListener('DOMContentLoaded', () => {
 		contentActiveClass: 'active',
 		initialContentIndex: 0,
 	});
+
+	const endTime = '2024-04-12';
+
+	timer('#timer', endTime);
+
+    images('.works')
 });

@@ -12,18 +12,18 @@ const forms = (state) => {
 		form.addEventListener('submit', (e) => {
 			e.preventDefault();
 
-            const messageInfo = document.createElement('div');
+			const messageInfo = document.createElement('div');
 			messageInfo.classList.add('status');
 			messageInfo.textContent = message.loading;
 			form.append(messageInfo);
 
 			const formData = new FormData(form);
-            if (form.getAttribute('data-calc') === 'end') {
-                for (let key in state)  {
-                    formData.append(key, state[key])
-                }
-            }
-            const formDataObj = transformFormData(formData);
+			if (form.getAttribute('data-calc') === 'end') {
+				for (let key in state) {
+					formData.append(key, state[key]);
+				}
+			}
+			const formDataObj = transformFormData(formData);
 
 			postReq('assets/server.php', formDataObj)
 				.then(() => {

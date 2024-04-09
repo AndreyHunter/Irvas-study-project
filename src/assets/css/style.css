@@ -894,15 +894,10 @@ textarea:focus {
 .popup_content,
 .popup_engineer_content,
 .popup_calc_end_content {
-    transition: .2s ease-in-out !important;
+    transition: .2s ease-in-out;
     transform: scale(0);
 	width: 40rem;
 	background-color: #ffffff;
-}
-
-.show-scale {
-    visibility: visible !important;
-    transform: scale(1);
 }
 
 .popup_close,
@@ -926,19 +921,17 @@ textarea:focus {
 	height: 100%;
 	z-index: 9;
 	background-color: rgba(0, 0, 0, 0.5);
+    display: grid;
+    place-items: center;
 }
 
 .overlay-active {
-    visibility: visible;
+    visibility: visible !important;
 }
 
 .popup_calc_content {
-	position: fixed;
-	top: 2%;
-	left: 50%;
-	-webkit-transform: translateX(-50%);
-	transform: translateX(-50%);
-	width: 44rem;
+    transform: scale(0);
+	width: 45rem;
 	padding: 1rem 0.5rem 4rem;
 	background-color: #ffffff;
 }
@@ -967,8 +960,32 @@ textarea:focus {
 	width: 30rem;
 }
 
+.big_img {
+    display: flex;
+    justify-content: center;
+}
+
+.big_img img.active {
+    display: block;
+    animation: haha .7s ease-in-out;
+}
+
+@keyframes haha {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
 .popup_calc_content #type1 {
 	display: inline-block;
+}
+
+.balcon_icons_img {
+    cursor: pointer;
 }
 
 .do_image_more img {
@@ -1010,7 +1027,7 @@ textarea:focus {
 }
 
 .popup_calc_profile {
-	display: none;
+	visibility: hidden;
 	position: fixed;
 	top: 0;
 	left: 0;
@@ -1018,14 +1035,12 @@ textarea:focus {
 	height: 100%;
 	z-index: 9;
 	background-color: rgba(0, 0, 0, 0.5);
+    display: grid;
+    place-items: center;
 }
 
 .popup_calc_profile_content {
-	position: fixed;
-	top: 10%;
-	left: 50%;
-	-webkit-transform: translateX(-50%);
-	transform: translateX(-50%);
+    transition: .1s ease-in-out;
 	width: 40rem;
 	padding: 1rem 5rem 4rem;
 	background-color: #ffffff;
@@ -1085,6 +1100,14 @@ textarea:focus {
 
 .checkbox-custom[id='cold']::before {
 	background: url(../img/modal_calc/check.png) center center no-repeat;
+}
+
+.show-scale {
+    transform: scale(1);
+}
+
+.popup_calc_end .popup_content {
+    transition: .1s ease-in-out;
 }
 
 .no-background {

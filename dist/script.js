@@ -1,6 +1,83 @@
 /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
+/***/ "./src/js/modules/forms.js":
+/*!*********************************!*\
+  !*** ./src/js/modules/forms.js ***!
+  \*********************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _server__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./server */ "./src/js/modules/server.js");
+/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./utils */ "./src/js/modules/utils.js");
+/* harmony import */ var _messages__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./messages */ "./src/js/modules/messages.js");
+
+
+
+const forms = () => {
+  const form = document.querySelectorAll('form');
+  const phoneInputs = document.querySelectorAll('input[name="user_phone"]');
+  phoneInputs.forEach(item => {
+    item.addEventListener('input', () => {
+      item.value = item.value.replace(/\D/, '');
+    });
+  });
+  form.forEach(form => {
+    form.addEventListener('submit', e => {
+      e.preventDefault();
+      const formData = new FormData(form);
+      const formDataObj = (0,_utils__WEBPACK_IMPORTED_MODULE_1__.transformFormData)(formData);
+      const messageInfo = document.createElement('div');
+      messageInfo.classList.add('status');
+      messageInfo.textContent = _messages__WEBPACK_IMPORTED_MODULE_2__.message.loading;
+      form.append(messageInfo);
+      (0,_server__WEBPACK_IMPORTED_MODULE_0__.postReq)('assets/server.php', formDataObj).then(() => {
+        (0,_messages__WEBPACK_IMPORTED_MODULE_2__.showMessage)('.status', _messages__WEBPACK_IMPORTED_MODULE_2__.message.succsess);
+      }).catch(err => {
+        console.error(err, 'Something went wrong');
+        (0,_messages__WEBPACK_IMPORTED_MODULE_2__.showMessage)('.status', _messages__WEBPACK_IMPORTED_MODULE_2__.message.error);
+      }).finally(() => {
+        setTimeout(() => {
+          document.querySelector('.status').remove();
+        }, 3500);
+        form.reset();
+      });
+    });
+  });
+};
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (forms);
+
+/***/ }),
+
+/***/ "./src/js/modules/messages.js":
+/*!************************************!*\
+  !*** ./src/js/modules/messages.js ***!
+  \************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   message: () => (/* binding */ message),
+/* harmony export */   showMessage: () => (/* binding */ showMessage)
+/* harmony export */ });
+const message = {
+  loading: 'Загрузка...',
+  succsess: 'Отправлено! Скоро наш менеджер с вами свяжется ',
+  error: 'Что-то пошло не так'
+};
+function showMessage(selector, textMessage) {
+  const el = document.querySelector(selector);
+  el.textContent = textMessage;
+}
+
+
+/***/ }),
+
 /***/ "./src/js/modules/modals.js":
 /*!**********************************!*\
   !*** ./src/js/modules/modals.js ***!
@@ -20,15 +97,26 @@ const initializingModal = () => {
     closeSelector,
     overlayActiveClass,
     modalActiveClass,
-    closeOnInside = true
+    closeOnInside = false,
+    closeOnEscape = false
   }) {
-    const trigger = document.querySelector(triggerSelector);
+    const trigger = document.querySelectorAll(triggerSelector);
     const modal = document.querySelector(modalOverlay);
     const modalContent = document.querySelector(modalSelector);
     const closeBtn = document.querySelector(closeSelector);
-    trigger.addEventListener('click', e => {
-      e.preventDefault();
-      openModal();
+    const popupOverlay = document.querySelectorAll('[data-modal]');
+    const popupContent = document.querySelectorAll('.popup_content');
+    trigger.forEach(item => {
+      item.addEventListener('click', e => {
+        e.preventDefault();
+        popupOverlay.forEach(item => {
+          item.classList.remove(overlayActiveClass);
+        });
+        popupContent.forEach(item => {
+          item.classList.remove(modalActiveClass);
+        });
+        openModal();
+      });
     });
     closeBtn.addEventListener('click', () => {
       closeModal();
@@ -41,14 +129,16 @@ const initializingModal = () => {
         }
       });
     }
-    document.addEventListener('keydown', e => {
-      const code = e.code;
-      if (code === 'Escape' && modal.classList.contains(overlayActiveClass)) {
-        closeModal();
-      } else {
-        return;
-      }
-    });
+    if (closeOnEscape) {
+      document.addEventListener('keydown', e => {
+        const code = e.code;
+        if (code === 'Escape' && modal.classList.contains(overlayActiveClass)) {
+          closeModal();
+        } else {
+          return;
+        }
+      });
+    }
     function openModal() {
       modal.classList.add(overlayActiveClass);
       modalContent.classList.add(modalActiveClass);
@@ -68,7 +158,9 @@ const initializingModal = () => {
     modalSelector: '.popup_engineer .popup_content',
     closeSelector: '.popup_engineer .popup_close',
     overlayActiveClass: 'overlay-active',
-    modalActiveClass: 'show-scale'
+    modalActiveClass: 'show-scale',
+    closeOnEscape: true,
+    closeOnInside: true
   });
 
   // FHONE MODAL
@@ -79,22 +171,75 @@ const initializingModal = () => {
     closeSelector: '.popup_content .popup_close',
     overlayActiveClass: 'overlay-active',
     modalActiveClass: 'show-scale',
-    closeOnInside: false
+    closeOnEscape: true,
+    closeOnInside: true
   });
 
-  // SECOND FHONE MODAL
+  // CALC MODAL
 
   bindModal({
-    triggerSelector: '.phone-link',
-    modalOverlay: '.popup',
-    modalSelector: '.popup_content',
-    closeSelector: '.popup_content .popup_close',
+    triggerSelector: '.popup_calc_btn',
+    modalOverlay: '.popup_calc',
+    modalSelector: '.popup_calc_content',
+    closeSelector: '.popup_calc_close',
     overlayActiveClass: 'overlay-active',
     modalActiveClass: 'show-scale',
-    closeOnInside: false
+    closeOnEscape: true,
+    closeOnInside: true
+  });
+  bindModal({
+    triggerSelector: '.popup_calc_button',
+    modalOverlay: '.popup_calc_profile',
+    modalSelector: '.popup_calc_profile_content',
+    closeSelector: '.popup_calc_profile_close',
+    overlayActiveClass: 'overlay-active',
+    modalActiveClass: 'show-scale',
+    closeOnInside: false,
+    closeOnEscape: true
+  });
+  bindModal({
+    triggerSelector: '.popup_calc_profile_button',
+    modalOverlay: '.popup_calc_end',
+    modalSelector: '.popup_calc_end .popup_content',
+    closeSelector: '.popup_calc_end_close',
+    overlayActiveClass: 'overlay-active',
+    modalActiveClass: 'show-scale',
+    closeOnInside: true,
+    closeOnEscape: true
   });
 };
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (initializingModal);
+
+/***/ }),
+
+/***/ "./src/js/modules/server.js":
+/*!**********************************!*\
+  !*** ./src/js/modules/server.js ***!
+  \**********************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   postReq: () => (/* binding */ postReq)
+/* harmony export */ });
+/* harmony import */ var _messages__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./messages */ "./src/js/modules/messages.js");
+
+async function postReq(url, body) {
+  try {
+    const res = await fetch(url, {
+      method: 'POST',
+      body: JSON.stringify(body)
+    });
+    if (!res.ok) {
+      throw new Error('Failed to fetch');
+    }
+    return await res.text();
+  } catch (err) {
+    console.error(err, 'Something went wrong');
+  }
+}
+
 
 /***/ }),
 
@@ -142,6 +287,24 @@ const tabs = ({
   }
 };
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (tabs);
+
+/***/ }),
+
+/***/ "./src/js/modules/utils.js":
+/*!*********************************!*\
+  !*** ./src/js/modules/utils.js ***!
+  \*********************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   transformFormData: () => (/* binding */ transformFormData)
+/* harmony export */ });
+function transformFormData(formData) {
+  return Object.fromEntries(formData.entries());
+}
+
 
 /***/ }),
 
@@ -14058,6 +14221,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _slider__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./slider */ "./src/js/slider.js");
 /* harmony import */ var _modules_modals__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./modules/modals */ "./src/js/modules/modals.js");
 /* harmony import */ var _modules_tabs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./modules/tabs */ "./src/js/modules/tabs.js");
+/* harmony import */ var _modules_forms__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./modules/forms */ "./src/js/modules/forms.js");
+
 
 
 
@@ -14077,6 +14242,15 @@ __webpack_require__.r(__webpack_exports__);
   contentActiveClass: 'active',
   initialContentIndex: 0
 });
+(0,_modules_tabs__WEBPACK_IMPORTED_MODULE_2__["default"])({
+  wrapperSelector: '.balcon_icons',
+  tabSelector: '.balcon_icons_img',
+  contentSelector: '.big_img > img',
+  tabActiveClass: 'do_image_more',
+  contentActiveClass: 'active',
+  initialContentIndex: 0
+});
+(0,_modules_forms__WEBPACK_IMPORTED_MODULE_3__["default"])();
 })();
 
 /******/ })()
